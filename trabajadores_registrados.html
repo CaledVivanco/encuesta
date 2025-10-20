@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Trabajadores Registrados</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    button {
+      margin-right: 10px;
+    }
+  </style>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <h1>Trabajadores Registrados</h1>
+  <button onclick="descargarExcel()">📥 Descargar Excel</button>
+  <button onclick="eliminarTodosLosTrabajadores()" style="float: right; margin-bottom: 20px;">🗑️ Eliminar todos los trabajadores</button>
+
+  <table id="tablaTrabajadores">
+    <thead>
+      <tr>
+        <th colspan="2">Información del trabajador</th>
+      </tr>
+    </thead>
+    <tbody id="tablaBody"></tbody>
+  </table>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    let trabajadores = JSON.parse(localStorage.getItem("trabajadores")) || [];
+
+    const campos = {
+      localidad: "Localidad",
+      barrio: "Barrio",
+      direccion: "Dirección",
+      establecimiento: "Nombre del establecimiento",
+      nombre: "Nombre",
+      tipoIdentificacion: "Tipo de identificación",
+      numeroIdentificacion: "Número de identificación",
+      edad: "Edad",
+      sexo: "Sexo",
+      telefono: "Teléfono",
+      trabajo: "Trabajo que ejerce",
+      tiempoOficio: "Tiempo en el oficio",
+      diasLaborados: "Días laborados",
+      horasDiarias: "Horas diarias",
+      estrato: "Estrato",
+      escolaridad: "Grado de escolaridad",
+      hijos: "Número de hijos",
+      grupoEtnico: "Grupo étnico",
+      afiliacionSS: "Afiliación a seguridad social",
+      cualSS: "¿Cuál seguridad social?",
+      afiliacionARL: "Afiliación a riesgos laborales",
+      cualARL: "¿Cuál ARL?",
+      riesgosLaborales: "Riesgos laborales",
+      riesgosIdentificados: "Riesgos identificados",
+      conocimientoRiesgos: "Conocimiento sobre riesgos laborales",
+      accidentesTrabajo: "Ha sufrido accidentes de trabajo",
+      cualesAccidentes: "¿Cuáles?",
+      enfermedades: "Enfermedades presentadas",
+      alcohol: "Consume bebidas alcohólicas",
+      fuma: "Fuma cigarrillo",
+      frecuenciaFumar: "Frecuencia de fumar",
+      psicoactivas: "Consume sustancias psicoactivas",
+      frecuenciaPsicoactivas: "Frecuencia consumo SPA",
+      observaciones: "Observaciones",
+      compromisos: "Compromisos"
+    };
+
+    function mostrarTrabajadores() {
+      const tablaBody = document.getElementById("tablaBody");
+      tablaBody.innerHTML = "";
+
+      if (trabajadores.length === 0) {
+        tablaBody.innerHTML = `<tr><td colspan="2">No hay trabajadores registrados.</td></tr>`;
+        return;
+      }
+
+      trabajadores.forEach((trabajador, index) => {
+        let html = "";
+
+        for (const key in campos) {
+          html += `<tr><td>${campos[key]}</td><td>${trabajador[key] || "No informado"}</td></tr>`;
+        }
+
+        html += `
+          <tr><td colspan="2">
+            <button onclick="editarTrabajador(${index})">✏️ Editar</button>
+            <button onclick="eliminarTrabajador(${index})">🗑️ Eliminar</button>
+          </td></tr>
+          <tr><td colspan="2"><hr></td></tr>
+        `;
+
+        tablaBody.innerHTML += html;
+      });
+    }
+
+    function editarTrabajador(index) {
+      localStorage.setItem("indiceEditarTrabajador", index);
+      window.location.href = "trabajador.html";
+    }
+
+    function eliminarTrabajador(index) {
+      if (confirm("¿Eliminar este trabajador?")) {
+        trabajadores.splice(index, 1);
+        localStorage.setItem("trabajadores", JSON.stringify(trabajadores));
+        mostrarTrabajadores();
+      }
+    }
+
+    function eliminarTodosLosTrabajadores() {
+      if (confirm("¿Seguro que deseas eliminar TODOS los trabajadores?")) {
+        localStorage.removeItem("trabajadores");
+        location.reload();
+      }
+    }
+
+    function descargarExcel() {
+      if (trabajadores.length === 0) return alert("No hay datos para exportar");
+
+      const datosPlano = trabajadores.map(trabajador => {
+        const plano = {};
+        for (const key in campos) {
+          plano[campos[key]] = trabajador[key] || '';
+        }
+        return plano;
+      });
+
+      const ws = XLSX.utils.json_to_sheet(datosPlano);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Trabajadores");
+      XLSX.writeFile(wb, "TrabajadoresRegistrados.xlsx");
+    }
+
+    document.addEventListener("DOMContentLoaded", mostrarTrabajadores);
+  </script>
+</body>
+</html>

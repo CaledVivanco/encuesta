@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Empresas Registradas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    button {
+      margin-right: 10px;
+    }
+  </style>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <h1>Empresas Registradas</h1>
+  <button onclick="descargarExcel()">📥 Descargar Excel</button>
+  <button onclick="eliminarTodasLasEmpresas()" class="btn-eliminar">
+  🗑️ Eliminar todas las empresas
+</button>
+
+
+
+  <table id="tablaEmpresas">
+    <thead>
+      <tr>
+        <th colspan="2">Información general</th>
+      </tr>
+    </thead>
+    <tbody id="tablaBody"></tbody>
+  </table>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbx7W8PK6arKFJ_kojmAY5SQXbw7ZW4A1yWJCsEr3IxsEAAX9P1vVIYjCRgE72c7FA1FFA/exec";
+
+  let empresas = JSON.parse(localStorage.getItem("empresas")) || [];
+
+  const campos = {
+    nombre: "Razón Social",
+    nit: "NIT",
+    fecha: "Fecha",
+    localidad: "Localidad",
+    barrio: "Barrio",
+    direccion: "Dirección",
+    trabajadores: "Número de trabajadores",
+    actividad: "Actividad económica",
+    riesgo: "Categoría de riesgo",
+    arl: "ARL afiliada",
+    asesoria: "Brinda asesoría",
+    atendio: "Nombre de quien atiende",
+    telefono: "Teléfono",
+    correo: "Correo",
+    "1_1": "1.1 Asignación persona que diseña SG-SST",
+    "1_2": "1.2 Afiliación al sistema de seguridad social",
+    "1_3": "1.3 Capacitación en SST",
+    "1_4": "1.4 Plan anual de trabajo",
+    "1_5": "1.5 Evaluaciones médicas ocupacionales",
+    "1_6": "1.6 Identificación de peligros, evaluación y valoracion de riesgos",
+    "1_7": "1.7 Medidas de prevención y control frente a peligros/riegos identificadosl",
+    "2_1": "2.1 Realizan la Autoevaluación de Estandares minimos De acuerdo a la circular 0082 ante el ministerio de trabajo",
+    "2_2": "2.2 Tienen diseñana e implementada la Política de desconexión laboral con base a la ley 2191 de 2022",
+    "2_3": "2.3 Tienen diseñana e implementada la Política de prevención de acoso sexual y laboral",
+    "2_4": "2.4 Tienen diseñada e implementada la Política de equidad de género",
+    "2_5": "2.5 de acuerdo a la ley estatutaria 1618 de 2013 la empresa tiene contratada personas en condicion de discapacidad",
+    totalMujeres: "Total mujeres",
+    totalHombres: "Total hombres",
+   
+    observaciones: "Observaciones",
+    compromisos: "Compromisos"
+  };
+
+  function mostrarEmpresas() {
+    const tablaBody = document.getElementById("tablaBody");
+    tablaBody.innerHTML = "";
+
+    empresas.filter(e => e).forEach((empresa, index) => {
+      let html = "";
+
+      for (const key in campos) {
+        if (key === "1_1") html += `<tr><td colspan="2" style="background:#eee;"><strong>Estándares mínimos del SG-SST</strong></td></tr>`;
+        if (key === "2_1") html += `<tr><td colspan="2" style="background:#eee;"><strong>Normatividad laboral y SST</strong></td></tr>`;
+        html += `<tr><td>${campos[key]}</td><td>${empresa[key] || "No informado"}</td></tr>`;
+      }
+
+      html += `
+        <tr><td colspan="2">
+          <button onclick="editarEmpresa(${index})">✏️ Editar</button>
+          <button onclick="eliminarEmpresa(${index})">🗑️ Eliminar</button>
+        </td></tr>
+        <tr><td colspan="2"><hr></td></tr>
+      `;
+
+      tablaBody.innerHTML += html;
+    });
+  }
+
+  function editarEmpresa(index) {
+    localStorage.setItem("indiceEditar", index);
+    window.location.href = "empresa.html";
+  }
+
+  function eliminarEmpresa(index) {
+    if (confirm('¿Eliminar esta empresa?')) {
+      const empresa = empresas[index];
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          accion: "eliminar",
+          nit: empresa.nit
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.text())
+      .then(msg => console.log(msg))
+      .catch(err => console.error("Error al eliminar en Google Sheets:", err));
+
+      empresas.splice(index, 1);
+      localStorage.setItem('empresas', JSON.stringify(empresas));
+      mostrarEmpresas();
+    }
+  }
+
+  function eliminarTodasLasEmpresas() {
+    if (confirm("¿Seguro que deseas eliminar TODAS las empresas?")) {
+      localStorage.removeItem("empresas");
+      location.reload();
+    }
+  }
+
+  function descargarExcel() {
+    if (empresas.length === 0) return alert("No hay datos para exportar");
+
+    const datosPlano = empresas.map(empresa => {
+      const plano = {};
+      for (const key in campos) {
+        plano[campos[key]] = empresa[key] || '';
+      }
+      return plano;
+    });
+
+    const ws = XLSX.utils.json_to_sheet(datosPlano);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Empresas");
+    XLSX.writeFile(wb, "EmpresasRegistradas.xlsx");
+  }
+
+  document.addEventListener("DOMContentLoaded", mostrarEmpresas);
+</script>
+
+</body>
+</html>

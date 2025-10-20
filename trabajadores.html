@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formulario de Trabajadores</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* Ajustes adicionales */
+    .botones {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    #listaTrabajadores {
+      margin-top: 40px;
+      display: none;
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #listaTrabajadores table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #listaTrabajadores th,
+    #listaTrabajadores td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    #listaTrabajadores th {
+      background-color: #2e8b57;
+      color: white;
+    }
+
+    .acciones {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .acciones button {
+      width: auto;
+      padding: 10px 15px;
+    }
+
+    #descargarExcel, #eliminarTodo {
+      display: none; /* Se muestran solo al ver los trabajadores */
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Formulario de Registro de Trabajadores</h1>
+
+  <form id="formTrabajador">
+    <div class="section-title">Información Personal</div>
+
+    <label for="localidad">Localidad:</label>
+    <input type="text" id="localidad" name="localidad" required />
+
+    <label for="barrio">Barrio:</label>
+    <input type="text" id="barrio" name="barrio" required />
+
+    <label for="direccion">Dirección:</label>
+    <input type="text" id="direccion" name="direccion" required />
+
+    <label for="establecimiento">Nombre del establecimiento:</label>
+    <input type="text" id="establecimiento" name="establecimiento" required />
+
+    <label for="nombre">Nombre completo:</label>
+    <input type="text" id="nombre" name="nombre" required />
+
+    <label for="tipoIdentificacion">Tipo de identificación:</label>
+    <select id="tipoIdentificacion" name="tipoIdentificacion" required>
+      <option value="">Seleccione...</option>
+      <option value="CC">Cédula de Ciudadanía</option>
+      <option value="TI">Tarjeta de Identidad</option>
+      <option value="CE">Cédula de Extranjería</option>
+      <option value="PAS">Pasaporte</option>
+    </select>
+
+    <label for="numeroIdentificacion">Número de identificación:</label>
+    <input type="number" id="numeroIdentificacion" name="numeroIdentificacion" required />
+
+    <label for="edad">Edad:</label>
+    <input type="number" id="edad" name="edad" min="10" required />
+
+    <label for="sexo">Sexo:</label>
+    <select id="sexo" name="sexo" required>
+      <option value="">Seleccione...</option>
+      <option value="Masculino">Masculino</option>
+      <option value="Femenino">Femenino</option>
+      <option value="Otro">Otro</option>
+    </select>
+
+    <label for="telefono">Número de teléfono:</label>
+    <input type="tel" id="telefono" name="telefono" required />
+
+    <label for="trabajo">Trabajo que ejerce:</label>
+    <input type="text" id="trabajo" name="trabajo" required />
+
+    <label for="tiempo">Tiempo en el oficio:</label>
+    <input type="text" id="tiempo" name="tiempo" placeholder="Ej: 2 años, 6 meses" required />
+
+    <label for="diasLaborados">Días laborados por semana:</label>
+    <input type="number" id="diasLaborados" name="diasLaborados" min="1" max="7" required />
+
+    <label for="horasDiarias">Horas diarias:</label>
+    <input type="number" id="horasDiarias" name="horasDiarias" min="1" max="24" required />
+
+    <label for="estrato">Estrato:</label>
+    <input type="number" id="estrato" name="estrato" min="1" max="6" />
+
+    <label for="escolaridad">Grado de escolaridad:</label>
+    <input type="text" id="escolaridad" name="escolaridad" required />
+
+    <label for="hijos">Número de hijos:</label>
+    <input type="number" id="hijos" name="hijos" min="0" />
+
+    <div class="section-title">Información Étnica y Seguridad Social</div>
+
+    <label for="grupoEtnico">Grupo étnico:</label>
+    <select id="grupoEtnico" name="grupoEtnico">
+      <option value="">Seleccione...</option>
+      <option value="Afrocolombiano">Afrocolombiano</option>
+      <option value="Indígena">Indígena</option>
+      <option value="Raizal">Raizal</option>
+      <option value="Rom">Rom</option>
+      <option value="Ninguno">Ninguno</option>
+    </select>
+
+    <label for="seguridadSocial">Afiliación a seguridad social:</label>
+    <select id="seguridadSocial" name="seguridadSocial">
+      <option value="">Seleccione...</option>
+      <option value="Sí">Sí</option>
+      <option value="No">No</option>
+    </select>
+
+    <label for="cualSeguridadSocial">¿Cuál?</label>
+    <input type="text" id="cualSeguridadSocial" name="cualSeguridadSocial" />
+
+    <label for="afiliacionRiesgos">Afiliación a riesgos laborales:</label>
+    <select id="afiliacionRiesgos" name="afiliacionRiesgos">
+      <option value="">Seleccione...</option>
+      <option value="Sí">Sí</option>
+      <option value="No">No</option>
+    </select>
+
+    <label for="cualRiesgos">¿Cuál?</label>
+    <input type="text" id="cualRiesgos" name="cualRiesgos" />
+
+    <div class="section-title">Riesgos Laborales</div>
+
+    <label for="riesgosLaborales">¿Está expuesto a riesgos laborales?</label>
+    <select id="riesgosLaborales" name="riesgosLaborales">
+      <option value="">Seleccione...</option>
+      <option value="Sí">Sí</option>
+      <option value="No">No</option>
+    </select>
+
+    <label for="riesgosIdentificados">Riesgos identificados:</label>
+    <select id="riesgosIdentificados" name="riesgosIdentificados" multiple>
+      <option value="Físicos">Físicos</option>
+      <option value="Químicos">Químicos</option>
+      <option value="Biomecánicos">Biomecánicos</option>
+      <option value="Locativos">Locativos</option>
+      <option value="Psicosociales">Psicosociales</option>
+      <option value="Mecánicos">Mecánicos</option>
+      <option value="Biológicos">Biológicos</option>
+      <option value="Públicos">Públicos</option>
+    </select>
+
+    <label for="conocimientoRiesgos">¿Tiene conocimiento sobre los riesgos laborales durante la ejecución del trabajo actual?</label>
+    <select id="conocimientoRiesgos" name="conocimientoRiesgos">
+      <option value="">Seleccione...</option>
+      <option value="Sí">Sí</option>
+      <option value="No">No</option>
+      <option value="Parcialmente">Parcialmente</option>
+    </select>
+
+    <label for="accidentesTrabajo">¿Ha sufrido accidentes de trabajo durante la ejecución del trabajo actual?</label>
+    <select id="accidentesTrabajo" name="accidentesTrabajo">
+      <option value="">Seleccione...</option>
+      <option value="Sí">Sí</option>
+      <option value="No">No</option>
+    </select>
+
+    <label for="cualesAccidentes">¿Cuáles?</label>
+    <input type="text" id="cualesAccidentes" name="cualesAccidentes" />
+
+    <label for="enfermedades">Enfermedades presentadas:</label>
+    <select id="enfermedades" name="enfermedades">
+      <option value="">Seleccione...</option>
+      <option value="Común">Común</option>
+      <option value="Laboral">Laboral</option>
+      <option value="Ninguna">Ninguna</option>
+    </select>
+
+    <div class="section-title">Hábitos y Estilo de Vida</div>
+
+    <label for="alcohol">¿Consume bebidas alcohólicas?</label>
+    <select id="alcohol" name="alcohol">
+      <option value="">Seleccione...</option>
+      <option value="Sí">Sí</option>
+      <option value="No">No</option>
+    </select>
+
+    <label for="fuma">¿Fuma cigarrillo?</label>
+    <select id="fuma" name="fuma">
+      <option value="">Seleccione...</option>
+      <option value="Sí">Sí</option>
+      <option value="No">No</option>
+    </select>
+
+    <label for="frecuenciaFumar">¿Con qué frecuencia?</label>
+    <select id="frecuenciaFumar" name="frecuenciaFumar">
+      <option value="">Seleccione...</option>
+      <option value="Diario">Diario</option>
+      <option value="Semanal">Semanal</option>
+      <option value="Quincenal">Quincenal</option>
+      <option value="Mensual">Mensual</option>
+    </select>
+
+    <label for="psicoactivas">¿Consume sustancias psicoactivas?</label>
+    <select id="psicoactivas" name="psicoactivas">
+      <option value="">Seleccione...</option>
+      <option value="Sí">Sí</option>
+      <option value="No">No</option>
+    </select>
+
+    <label for="frecuenciaPsicoactivas">¿Con qué frecuencia?</label>
+    <select id="frecuenciaPsicoactivas" name="frecuenciaPsicoactivas">
+      <option value="">Seleccione...</option>
+      <option value="Diario">Diario</option>
+      <option value="Semanal">Semanal</option>
+      <option value="Quincenal">Quincenal</option>
+      <option value="Mensual">Mensual</option>
+    </select>
+
+    <div class="section-title">Observaciones y Compromisos</div>
+
+    <label for="observaciones">Observaciones:</label>
+    <textarea id="observaciones" name="observaciones"></textarea>
+
+    <label for="compromisos">Compromisos:</label>
+    <textarea id="compromisos" name="compromisos"></textarea>
+
+<div class="botones">
+  <button type="submit" id="guardarBtn">💾 Guardar</button>
+  <button type="button" id="verTrabajadoresBtn">👀 Ver trabajadores registrados</button>
+</div>
+
+  </form>
+
+  <!-- === SECCIÓN DE TRABAJADORES GUARDADOS === -->
+  <section id="listaTrabajadores">
+    <h2 style="text-align:center; color:#007A33;">Trabajadores Guardados</h2>
+
+    <div style="text-align:center; margin-bottom:20px;">
+      <button id="descargarExcel" style="background-color:#007A33; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;">Descargar Excel</button>
+      <button id="eliminarTodo" style="background-color:#D2342E; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;">Eliminar Todos</button>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table id="tablaTrabajadores" border="1" style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr id="encabezadosTabla"></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Librería para exportar Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.19.3/xlsx.full.min.js"></script>
+  <script src="script.js"></script>
+
+  <script>
+    document.getElementById("verTrabajadoresBtn").addEventListener("click", () => {
+  window.location.href = "trabajadores_registrados.html";
+});
+
+  </script>
+</body>
+</html>
