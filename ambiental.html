@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salud y Ambiente</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <h1>Formulario Salud y Ambiente 🌱</h1>
+
+  <form id="formSaludAmbiente">
+
+    <label>Fecha:</label>
+    <input type="date" name="fecha" required>
+
+    <label>Barrio:</label>
+    <input type="text" name="barrio">
+
+    <label>Dirección:</label>
+    <input type="text" name="direccion">
+
+    <label>Razón social:</label>
+    <input type="text" name="razon">
+
+    <label>Número de trabajadores:</label>
+    <input type="number" name="trabajadores" min="0">
+
+    <label>Actividad económica:</label>
+    <input type="text" name="actividad">
+
+    <label>ARL afiliada:</label>
+    <input type="text" name="arl">
+
+    <label>Nombre de quien atiende la visita:</label>
+    <input type="text" name="atendio">
+
+    <label>Teléfono:</label>
+    <input type="number" name="telefono">
+
+    <label>Correo electrónico:</label>
+    <input type="email" name="correo">
+
+    <!-- 🔹 Sección de Riesgos Ambientales -->
+    <h3>Gestión de sustancias y riesgos ambientales</h3>
+
+    <label for="identificacion">
+      ¿Se encuentran identificadas las sustancias o condiciones ambientales peligrosas?
+    </label>
+    <select name="identificacion" id="identificacion">
+      <option value="No">No</option>
+      <option value="Sí">Sí</option>
+    </select>
+
+    <div id="identificacionCuales" style="display:none;">
+      <label>¿Cuáles?</label>
+      <textarea name="identificacionCuales"></textarea>
+    </div>
+
+    <label>
+      ¿Existen fichas técnicas de productos peligrosos?
+    </label>
+    <select name="fichasTecnicas">
+      <option value="No">No</option><option value="Sí">Sí</option>
+    </select>
+
+    <label>
+      ¿Están definidos la manipulación y almacenamiento de dichos productos?
+    </label>
+    <select name="manipulacionAlmacenamiento">
+      <option value="No">No</option><option value="Sí">Sí</option>
+    </select>
+
+    <label>
+      ¿Existen controles de exposición/elementos de protección personal (EPP)?
+    </label>
+    <select name="controlesEpp">
+      <option value="No">No</option><option value="Sí">Sí</option>
+    </select>
+
+    <label>
+      ¿Existe protocolo de eliminación/seguimiento de residuos peligrosos?
+    </label>
+    <select name="residuosPeligrosos">
+      <option value="No">No</option><option value="Sí">Sí</option>
+    </select>
+
+    <label>
+      ¿Tienen información relativa al transporte del material peligroso?
+    </label>
+    <select name="transporte">
+      <option value="No">No</option><option value="Sí">Sí</option>
+    </select>
+
+    <label>
+      ¿Tienen medidas en caso de explosión/vertido accidental?
+    </label>
+    <select name="explosion">
+      <option value="No">No</option><option value="Sí">Sí</option>
+    </select>
+
+    <label>
+      ¿Cuentan con procedimientos de primeros auxilios?
+    </label>
+    <select name="primerosAuxilios">
+      <option value="No">No</option><option value="Sí">Sí</option>
+    </select>
+
+    <label>
+      ¿Existen medidas para extinción de incendios?
+    </label>
+    <select name="incendios">
+      <option value="No">No</option><option value="Sí">Sí</option>
+    </select>
+
+    <label>
+      ¿Cuentan con las políticas de protección del medio ambiente/información ecológica?
+    </label>
+    <select name="proteccionAmbiental">
+      <option value="No">No</option><option value="Sí">Sí</option>
+    </select>
+
+    <label>
+      ¿Reciben asesoría y apoyo de la ARL?
+    </label>
+    <select name="asesoriaArl">
+      <option value="No">No</option><option value="Sí">Sí</option>
+    </select>
+
+    <label>
+      ¿Realizan capacitaciones en manejo de residuos peligrosos?
+    </label>
+    <select name="capacitacionResiduos">
+      <option value="No">No</option><option value="Sí">Sí</option>
+    </select>
+
+    <!-- 🔹 Sección Otros riesgos -->
+    <h3>Otros riesgos identificados</h3>
+
+    <label>Seleccione todos los que apliquen:</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" name="riesgos" value="Físicos"> Físicos</label>
+      <label><input type="checkbox" name="riesgos" value="Químicos"> Químicos</label>
+      <label><input type="checkbox" name="riesgos" value="Biomecánicos"> Biomecánicos</label>
+      <label><input type="checkbox" name="riesgos" value="Locativos"> Locativos</label>
+      <label><input type="checkbox" name="riesgos" value="Psicosociales"> Psicosociales</label>
+      <label><input type="checkbox" name="riesgos" value="Mecánicos"> Mecánicos</label>
+      <label><input type="checkbox" name="riesgos" value="Biológicos"> Biológicos</label>
+      <label><input type="checkbox" name="riesgos" value="Públicos"> Públicos</label>
+    </div>
+
+    <label>Observaciones:</label>
+    <textarea name="observaciones"></textarea>
+
+    <label>Compromisos:</label>
+    <textarea name="compromisos"></textarea>
+
+    <button type="button" onclick="guardarAmbiental()">💾 Guardar</button>
+    <button type="button" onclick="window.location.href='ambientales_registrados.html'">📋 Ver registros</button>
+
+  </form>
+
+  <script>
+    // Mostrar campo ¿Cuáles? cuando eligen "Sí"
+    const selectIdentificacion = document.getElementById("identificacion");
+    const divCuales = document.getElementById("identificacionCuales");
+
+    selectIdentificacion.addEventListener("change", () => {
+      divCuales.style.display = selectIdentificacion.value === "Sí" ? "block" : "none";
+    });
+  </script>
+
+  <script src="salud_ambiente.js"></script>
+
+</body>
+</html>
